@@ -31,7 +31,7 @@ check_repodata.py is used to check repo sync states of content synchronized
 with Spacewalk, Red Hat Satellite and SUSE Manager. Login credentials are
 assigned using the following shell variables:
 SATELLITE_LOGIN username
-SATELLITE_PASSWORDpassword
+SATELLITE_PASSWORD password
 It is also possible to create an authfile (permissions 0600) for usage with this
 script. The first line needs to contain the username, the second line should
 consist of the appropriate password. If you're not defining variables or an
