@@ -61,16 +61,16 @@ Options:
 
 Examples
 ========
-Check sync status for two repositories with default threshold (warning: 24 hours, critical: 48 hours). Login information are provided by an authfile ``myauthfile``:
+Check sync status for two repositories with default threshold (*warning: 24 hours, critical: 48 hours*). Login information are provided by an authfile ``myauthfile``:
 ```
-$ ./check_repodata.py -l epel-el6-x86_64 -l epel-el7-x86_64 -a myauthfile
-OK: Specified channels are synchronized: 'epel-el6-x86_64', 'epel-el7-x86_64'
+$ ./check_repodata.py -l centos6-x86_64 -l epel-el6-x86_64 -a myauthfile
+OK: Specified channels are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
 ```
 
 Check sync status for two repositories (*alternative notation*) with custom thresholds, Spacewalk API checks are disabled:
 ```
-$ ./check_repodata.py -l "epel-el6-x86_64,epel-el7-x86_64" -r -w 12 -c 24
-WARNING: At least one channel is still syncing or outdated: 'mis-el6-x86_64'
+$ ./check_repodata.py -l "centos6-x86_64,epel-el6-x86_64" -r -w 12 -c 24
+WARNING: At least one channel is still syncing or outdated: 'centos6-x86_64'
 ```
 
 Debugging repo sync state checks:
