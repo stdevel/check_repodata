@@ -49,6 +49,12 @@ If you're not defining variables or an authfile you will be prompted to enter yo
         #-l / --channels
         parser.add_option("-l", "--channels", dest="channels", action="append", metavar="CHANNELS", help="defines one or more channels that should be checked")
 	
+	#-e / --all-channels
+	parser.add_option("-e", "--all-channels", dest="allChannels", action="store_true", default=False, help="checks all channels served by Spacewalk, Red Hat Satellite or SUSE Manager")
+	
+	#-x / --exclude-channels
+	parser.add_option("-x", "--exclude-channels", dest="excludeChannels", action="append", metavar="CHANNELS", help="defines channels that should be ignored (in combination with -e / --all-channels)")
+	
 	#-w / --warning-threshold
 	parser.add_option("-w", "--warning-threshold", dest="warningThres", metavar="THRESHOLD", type="int", default=24, help="warning threshold in hours (default: 24)")
 	
@@ -61,24 +67,34 @@ If you're not defining variables or an authfile you will be prompted to enter yo
         #define URL and login information
         SATELLITE_URL = "http://"+options.server+"/rpc/api"
 
-        #debug
+        #debug outputs
         if options.debug: print "OPTIONS: {0}".format(options)
         if options.debug: print "ARGUMENTS: {0}".format(args)
 
-        #check whether at least one channel was specified
-        try:
-                if len(options.channels) == 0:
-                        #no channel specified
-                        print "UNKNOWN: no channel(s) specified"
-                        exit(3)
-                else:
-                        #try to explode string
-                        if len(options.channels) == 1: options.channels = str(options.channels).strip("[]'").split(",")
-                        if options.debug: print "DEBUG: ",options.channels
-        except:
-                #size excpetion, no channel specified
-                print "UNKNOWN: no channel(s) specified"
-                exit(3)
+        #initiate excludeChannels without content if none specified
+	try:
+		if len(options.excludeChannels) == 0: options.excludeChannels = []
+		else:
+			#try to explode string
+                        if len(options.excludeChannels) == 1: options.excludeChannels = str(options.excludeChannels).strip("[]'").split(",")
+	except:
+		options.excludeChannels = []
+	
+	#check whether channels were specified
+	if options.allChannels == False:
+        	try:
+                	if len(options.channels) == 0:
+                        	#no channel specified
+	                        print "UNKNOWN: no channel(s) specified"
+	                        exit(3)
+	                else:
+        	                #try to explode string
+                	        if len(options.channels) == 1: options.channels = str(options.channels).strip("[]'").split(",")
+                        	if options.debug: print "DEBUG: ",options.channels
+	        except:
+        	        #size excpetion, no channel specified
+                	print "UNKNOWN: no channel(s) specified"
+	                exit(3)
 
         #setup client and key depending on mode if needed
 	if not options.repodataOnly:
@@ -120,6 +136,24 @@ If you're not defining variables or an authfile you will be prompted to enter yo
 	        else:
         	        if options.debug: print "INFO: supported API version ("+api_level+") found."
 	
+	#try to guess channels if requested
+	if options.allChannels == True:
+		myChannels = []
+		if options.repodataOnly == False:
+			#check using Spacewalk API
+			for channel in client.channel.listAllChannels(key):
+				#add channel if not blacklisted
+				if channel["label"] not in options.excludeChannels: myChannels.append(channel["label"])
+		else:
+			#check for folder names on file system
+			d="/var/cache/rhn/repodata"
+			tempChannels = [os.path.join(d,o) for o in os.listdir(d) if os.path.isdir(os.path.join(d,o))]
+			for entry in tempChannels:
+				k = entry.rfind("/")
+				#add channel if not blacklisted
+				if str(entry[k+1:]) not in options.excludeChannels: myChannels.append(entry[k+1:])
+		options.channels = myChannels
+	
 	#check repo sync state
 	errors = []
 	critError = False
@@ -150,28 +184,34 @@ If you're not defining variables or an authfile you will be prompted to enter yo
 			#rebuild in progress, check timestamp of first file
 			errors.append(channel)
 		#check for outdated repodata
-		stamp = datetime.datetime.fromtimestamp(os.path.getmtime("/var/cache/rhn/repodata/"+channel+"/repomd.xml"))
-		now = datetime.datetime.today()
-		diff = now - stamp
-		diff = time.strftime("%H",time.gmtime(diff.seconds))
-		if options.debug: print "DEBUG: Difference for /var/cache/rhn/repodata/"+channel+"/repomd.xml is "+diff+" hours"
-		if int(diff) >= options.criticalThres:
-			if options.debug: print "DEBUG: File system timestamp difference (" + str(diff) + ") is higher than critical threshold (" + str(options.criticalThres) + ")"
-			if channel not in errors: errors.append(channel)
+		try:
+			stamp = datetime.datetime.fromtimestamp(os.path.getmtime("/var/cache/rhn/repodata/"+channel+"/repomd.xml"))
+			now = datetime.datetime.today()
+			diff = now - stamp
+			diff = time.strftime("%H",time.gmtime(diff.seconds))
+			if options.debug: print "DEBUG: Difference for /var/cache/rhn/repodata/"+channel+"/repomd.xml is "+diff+" hours"
+			if int(diff) >= options.criticalThres:
+				if options.debug: print "DEBUG: File system timestamp difference (" + str(diff) + ") is higher than critical threshold (" + str(options.criticalThres) + ")"
+				if channel not in errors: errors.append(channel)
+				critError = True
+				if options.debug: print "DEBUG: File system timestamp difference (" + str(diff) + ") is higher than warning threshold (" + str(options.criticalThres) + ")"
+			elif int(diff) >= options.warningThres:
+				if channel not in errors: errors.append(channel)
+		except:
+			#unable to check filesystem
+			if options.debug: print "DEBUG: unable to check filesystem timestamp for /var/cache/rhn/repodata/"+channel+"/repomd.xml."
 			critError = True
-			if options.debug: print "DEBUG: File system timestamp difference (" + str(diff) + ") is higher than warning threshold (" + str(options.criticalThres) + ")"
-		elif int(diff) >= options.warningThres:
 			if channel not in errors: errors.append(channel)
 	
 	#exit with appropriate Nagios / Icinga plugin return code and message
 	if options.debug: print "ERRORS: " + str(errors)
 	if len(errors) >= 1:
 		if critError == True:
-			print "CRITICAL: At least one channel is still syncing or outdated:",str(errors).strip("[]")
+			print "CRITICAL: "+str(len(errors))+" channel(s) is still syncing or outdated:",str(errors).strip("[]")
 			exit(2)
 		else:
-			print "WARNING: At least one channel is still syncing or outdated:",str(errors).strip("[]")
+			print "WARNING: "+str(len(errors))+" channel(s) is still syncing or outdated:",str(errors).strip("[]")
 			exit(1)
 	else:
-		print "OK: Specified channels are synchronized:",str(options.channels).strip("[]")
+		print "OK: Specified channels ("+str(len(options.channels))+") are synchronized:",str(options.channels).strip("[]")
 		exit(0)
