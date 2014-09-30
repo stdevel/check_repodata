@@ -22,6 +22,7 @@ $ ./check_repodata.py -a myauthfile -l centos6-x86_64
 ```
 
 
+
 Parameters
 ==========
 
@@ -106,4 +107,17 @@ DEBUG: Yum sync difference for channel 'epel-el6-x86_64' is 12 hours
 DEBUG: Difference for /var/cache/rhn/repodata/epel-el6-x86_64/repomd.xml is 12 hours
 ERRORS: []
 OK: Specified channels (1) are synchronized: 'epel-el6-x86_64'
+```
+
+
+
+SELinux
+=======
+You might be receiving ``Unable to read output`` errors by NRPE. Make sure that you're placing the script in the correct Nagios plugins directory and reset the SELinux file context:
+```
+# mv check_repodata.py /usr/lib64/nagios/plugins/check_repodata
+# restorecon -v /usr/lib64/nagios/plugins/check_repodata
+restorecon reset /usr/lib64/nagios/plugins/check_repodata context unconfined_u:object_r:lib_t:s0->unconfined_u:object_r:nagios_unconfined_plugin_exec_t:s0
+nagios $ ./check_nrpe -H server -c check_repodata
+OK: Specified channels (2) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
 ```
