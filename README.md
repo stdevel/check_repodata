@@ -3,7 +3,7 @@ check_repodata
 
 ![Example Icinga screenshot](https://raw.githubusercontent.com/stdevel/check_repodata/master/Icinga_Screenshot.png "Example Icinga screenshot")
 
-``check_repodata.py`` is a Nagios / Icinga plugin for checking sync states of repositories managed by Spacewalk, Red Hat Satellite or SUSE Manager. It can assist you detecting outdates repositories and ``taskomaticd`` issues. The script checks file system timestamps and - optionally - YUM repo sync states that are queried using the Spacewal API. If using this features (*which is the default*) a valid username / password combination to your Spacewalk, Red Hat Satellite or SUSE Manager system is required. The login credentials **are prompted** when running the script. To automate this you have two options:
+``check_repodata.py`` is a Nagios / Icinga plugin for checking sync states of repositories managed by Spacewalk, Red Hat Satellite or SUSE Manager. It can assist you detecting outdates repositories and ``taskomaticd`` issues. The script checks file system timestamps and - optionally - YUM repo sync states that are queried using the Spacewalk API. If using this features (*which is the default*) a valid username / password combination to your Spacewalk, Red Hat Satellite or SUSE Manager system is required. The login credentials **are prompted** when running the script. To automate this you have two options:
 
 **1.Setting two shell variables:**
 * **SATELLITE_LOGIN** - a username
