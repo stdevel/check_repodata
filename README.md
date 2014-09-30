@@ -63,6 +63,8 @@ Options:
                         warning threshold in hours (default: 24)
   -c THRESHOLD, --critical-threshold=THRESHOLD
                         critical threshold in hours (default: 48)
+  -f, --full-output     displays the names of successfully synchronized
+                        channels
 ```
 
 
@@ -72,7 +74,7 @@ Examples
 Check sync status for two repositories with default threshold (*warning: 24 hours, critical: 48 hours*). Login information are provided by an authfile ``myauthfile``:
 ```
 $ ./check_repodata.py -l centos6-x86_64 -l epel-el6-x86_64 -a myauthfile
-OK: Specified channels (2) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
+OK: Specified channels (2) are synchronized
 ```
 
 Check sync status for two repositories (*alternative notation*) with custom thresholds, Spacewalk API checks are disabled:
@@ -81,21 +83,21 @@ $ ./check_repodata.py -l "centos6-x86_64,epel-el6-x86_64" -r -w 12 -c 24
 WARNING: 1 channel(s) is still syncing or outdated: 'centos6-x86_64'
 ```
 
-Check sync status for all repositories found on the filesystem:
+Check sync status for all repositories found on the filesystem, full output is enabled displaying all the checked channel names:
 ```
-$ ./check_repodata.py -e -r
+$ ./check_repodata.py -erf
 OK: Specified channels (4) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64', 'centos7-x86_64', 'epel-el7-x86_64'
 ```
 
 Check sync status for all repositories found on the server (*using authfile*) and filesystem, excluding two channels:
 ```
 $ ./check_repodata.py -e -a myauthfile -x "centos7-x86_64,epel-el7-x86_64"
-OK: Specified channels (2) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
+OK: Specified channels (2) are synchronized
 ```
 
-Debugging repo sync state checks:
+Debugging repo sync state checks, full output is enabled:
 ```
-$ ./check_repodata.py -l epel-el6-x86_64 -d
+$ ./check_repodata.py -l epel-el6-x86_64 -df
 OPTIONS: {'authfile': '', 'warningThres': 24, 'criticalThres': 48, 'server': 'localhost', 'channels': ['epel-el6-x86_64'], 'repodataOnly': False, 'debug': True}
 ARGUMENTS: []
 DEBUG:  ['epel-el6-x86_64']
