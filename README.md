@@ -53,6 +53,11 @@ Options:
                         state inside Spacewalk
   -l CHANNELS, --channels=CHANNELS
                         defines one or more channels that should be checked
+  -e, --all-channels    checks all channels served by Spacewalk, Red Hat
+                        Satellite or SUSE Manager
+  -x CHANNELS, --exclude-channels=CHANNELS
+                        defines channels that should be ignored (in
+                        combination with -e / --all-channels)
   -w THRESHOLD, --warning-threshold=THRESHOLD
                         warning threshold in hours (default: 24)
   -c THRESHOLD, --critical-threshold=THRESHOLD
@@ -66,13 +71,25 @@ Examples
 Check sync status for two repositories with default threshold (*warning: 24 hours, critical: 48 hours*). Login information are provided by an authfile ``myauthfile``:
 ```
 $ ./check_repodata.py -l centos6-x86_64 -l epel-el6-x86_64 -a myauthfile
-OK: Specified channels are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
+OK: Specified channels (2) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
 ```
 
 Check sync status for two repositories (*alternative notation*) with custom thresholds, Spacewalk API checks are disabled:
 ```
 $ ./check_repodata.py -l "centos6-x86_64,epel-el6-x86_64" -r -w 12 -c 24
-WARNING: At least one channel is still syncing or outdated: 'centos6-x86_64'
+WARNING: 1 channel(s) is still syncing or outdated: 'centos6-x86_64'
+```
+
+Check sync status for all repositories found on the filesystem:
+```
+$ ./check_repodata.py -e -r
+OK: Specified channels (4) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64', 'centos7-x86_64', 'epel-el7-x86_64'
+```
+
+Check sync status for all repositories found on the server (*using authfile*) and filesystem, excluding two channels:
+```
+$ ./check_repodata.py -e -a myauthfile -x "centos7-x86_64,epel-el7-x86_64"
+OK: Specified channels (2) are synchronized: 'centos6-x86_64', 'epel-el6-x86_64'
 ```
 
 Debugging repo sync state checks:
@@ -88,5 +105,5 @@ Password:
 DEBUG: Yum sync difference for channel 'epel-el6-x86_64' is 12 hours
 DEBUG: Difference for /var/cache/rhn/repodata/epel-el6-x86_64/repomd.xml is 12 hours
 ERRORS: []
-OK: Specified channels are synchronized: 'epel-el6-x86_64'
+OK: Specified channels (1) are synchronized: 'epel-el6-x86_64'
 ```
