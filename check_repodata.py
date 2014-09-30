@@ -32,7 +32,7 @@ if __name__ == "__main__":
 If you're not defining variables or an authfile you will be prompted to enter your login information.
 
                 Checkout the GitHub page for updates: https://github.com/stdevel/check_repodata'''
-        parser = OptionParser(description=desc,version="%prog version 0.1")
+        parser = OptionParser(description=desc,version="%prog version 0.2")
 
         #-a / --authfile
         parser.add_option("-a", "--authfile", dest="authfile", metavar="FILE", default="", help="defines an auth file to use instead of shell variables")
@@ -60,6 +60,9 @@ If you're not defining variables or an authfile you will be prompted to enter yo
 	
 	#-c / --critical-threshold
 	parser.add_option("-c", "--critical-threshold", dest="criticalThres", metavar="THRESHOLD", type="int", default=48, help="critical threshold in hours (default: 48)")
+	
+	#-f / --full-output
+	parser.add_option("-f", "--full-output", dest="fullOutput", action="store_true", default=False, help="displays the names of successfully synchronized channels")
 
         #parse arguments
         (options, args) = parser.parse_args()
@@ -207,11 +210,14 @@ If you're not defining variables or an authfile you will be prompted to enter yo
 	if options.debug: print "ERRORS: " + str(errors)
 	if len(errors) >= 1:
 		if critError == True:
-			print "CRITICAL: "+str(len(errors))+" channel(s) is still syncing or outdated:",str(errors).strip("[]")
+			print "CRITICAL: "+str(len(errors))+" channel(s) still syncing or outdated:",str(errors).strip("[]")
 			exit(2)
 		else:
-			print "WARNING: "+str(len(errors))+" channel(s) is still syncing or outdated:",str(errors).strip("[]")
+			print "WARNING: "+str(len(errors))+" channel(s) still syncing or outdated:",str(errors).strip("[]")
 			exit(1)
 	else:
-		print "OK: Specified channels ("+str(len(options.channels))+") are synchronized:",str(options.channels).strip("[]")
+		if options.fullOutput == True:
+			print "OK: Specified channel(s) ("+str(len(options.channels))+") synchronized:",str(options.channels).strip("[]")
+		else:
+			print "OK: Specified channel(s) ("+str(len(options.channels))+") synchronized"
 		exit(0)
