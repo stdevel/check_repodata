@@ -1,0 +1,18 @@
+name: check_repodata
+description: "file:///README.md"
+url: "https://github.com/stdevel/check_repodata"
+tags: Spacewalk,Red Hat Satellite,SUSE Manager,YUM
+vendor: Linux
+target: Operating System
+type: Plugin
+license: gplv2
+releases: 
+  - 
+    name: 1.0
+    description: "1.0 Release"
+    files: 
+      - 
+        name: check_repodata.py
+        url: "file:///check_repodata.py"
+        description: "First release"
+        checksum: af3bb6ff5ace2d76ac28faf41ab8bc8e
