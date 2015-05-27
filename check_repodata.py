@@ -169,11 +169,7 @@ If you're not defining variables or an authfile you will be prompted to enter yo
                 if str(entry[k+1:]) not in options.excludeChannels: myChannels.append(entry[k+1:])
         # apply positiveFilter if not empty
         if options.positiveFilter:
-            tempChannels = []
-            for channel in myChannels:       
-                for filter in options.positiveFilter:
-                    if filter in channel: tempChannels.append(channel)
-            myChannels = tempChannels
+            myChannels = [ channelname for channelname in myChannels for filter in options.positiveFilter if filter in channelname ]
         # apply negativeFilter if not empty
         if options.negativeFilter:
             for filter in options.negativeFilter:
