@@ -65,6 +65,14 @@ Options:
                         critical threshold in hours (default: 48)
   -f, --full-output     displays the names of successfully synchronized
                         channels
+  -p POSFILTER, --positive-filter=POSFILTER
+                        only channels containing POSFILTER are checked.
+                        POSFILTER is evaluated before NEGFILTER
+                        (in combination with -e / --all-channels)
+  -n NEGFILTER, --negative-filter=NEGFILTER
+                        channels containing NEGFILTER are ignored.
+                        NEGFILTER is evaluated after POSFILTER
+                        (in combination with -e / --all-channels)
 ```
 
 
@@ -93,6 +101,12 @@ Check sync status for all repositories found on the server (*using authfile*) an
 ```
 $ ./check_repodata.py -e -a myauthfile -x "centos7-x86_64,epel-el7-x86_64"
 OK: Specified channels (2) are synchronized
+```
+
+Check sync status for all repositories found on the server (*using authfile*) and filesystem, but only centos, and excluding channels containing the string 'test':
+```
+$ ./check_repodata.py -e -a myauthfile -p centos -n test
+OK: Specified channels (4) are synchronized
 ```
 
 Debugging repo sync state checks, full output is enabled:
