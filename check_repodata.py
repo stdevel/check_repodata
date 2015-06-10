@@ -76,6 +76,9 @@ If you're not defining variables or an authfile you will be prompted to enter yo
     #-n / --negative-filter
     parser.add_option("-n", "--negative-filter", dest="negativeFilter", action="append", metavar="NEGFILTER", help="channels containing NEGFILTER are ignored. NEGFILTER is evaluated after POSFILTER (in combination with -e / --all-channels)")
 
+    # -o / --logical-and
+    parser.add_option("-o", "--logical-and", dest="logicalAnd", action="store_true", default=False, help="if set, the check result is only not OK if all checked channels are not OK (e.g. taskkomatic is not running anymore.). Usefull if some of your channels do net get frequently updates")
+
     #parse arguments
     (options, args) = parser.parse_args()
 
@@ -227,7 +230,7 @@ If you're not defining variables or an authfile you will be prompted to enter yo
 
     #exit with appropriate Nagios / Icinga plugin return code and message
     if options.debug: print "ERRORS: " + str(errors)
-    if len(errors) >= 1:
+    if ( not options.logicalAnd and len(errors) >= 1) or ( options.logicalAnd and len(errors) == len(options.channels) ) :
         if critError == True:
             print "CRITICAL: "+str(len(errors))+" channel(s) still syncing or outdated:",str(errors).strip("[]")
             exit(2)
