@@ -37,7 +37,7 @@ if __name__ == "__main__":
 If you're not defining variables or an authfile you will be prompted to enter your login information.
 
             Checkout the GitHub page for updates: https://github.com/stdevel/check_repodata'''
-    parser = OptionParser(description=desc,version="%prog version 0.2")
+    parser = OptionParser(description=desc,version="%prog version 0.2.1")
 
     #-a / --authfile
     parser.add_option("-a", "--authfile", dest="authfile", metavar="FILE", default="", help="defines an auth file to use instead of shell variables")
