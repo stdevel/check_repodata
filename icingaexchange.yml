@@ -8,11 +8,11 @@ type: Plugin
 license: gplv2
 releases: 
   - 
-    name: 1.0
-    description: "1.0 Release"
+    name: 0.2.1
+    description: "0.2.1 release"
     files: 
       - 
         name: check_repodata.py
         url: "file:///check_repodata.py"
-        description: "First release"
-        checksum: af3bb6ff5ace2d76ac28faf41ab8bc8e
+        description: "0.2.1 release"
+        checksum: ff7fcad49340395846d9704bd9f06f84
