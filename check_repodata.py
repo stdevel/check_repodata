@@ -4,15 +4,14 @@
 # states of content synchronized with Spacewalk,
 # Red Hat Satellite or SUSE Manager.
 #
-# 2014 By Christian Stankowic
+# 2015 By
+# Christian Stankowic
 # <info at stankowic hyphen development dot net>
 # https://github.com/stdevel
 #
-# 2015 by Bernhard Lichtinger < lichtinger at lrz dot de >:
-# * add new options -n and -p
-# * correct calculation of time difference
-# * only spaces for indentation thanks to reindent.py
-# * add supported API version 16 for spacewalk-2.3
+# Bernhard Lichtinger
+# <lichtinger at lrz dot de>
+# https://github.com/photoninger
 #
 
 from optparse import OptionParser
@@ -25,7 +24,7 @@ import glob
 import datetime
 
 #list of supported API levels
-supportedAPI = ["11.1","12","13","13.0","14","14.0","15","15.0","16"]
+supportedAPI = ["11.1","12","13","13.0","14","14.0","15","15.0","16","16.0"]
 
 if __name__ == "__main__":
     #define description, version and load parser
