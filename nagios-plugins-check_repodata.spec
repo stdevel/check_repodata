@@ -1,5 +1,5 @@
 Name:           nagios-plugins-check_repodata
-Version:        1.0
+Version:        0.2
 Release:        1%{?dist}
 Summary:        A Nagios / Icinga plugin for checking sync states of repositories managed by Spacewalk, Red Hat Satellite or SUSE Manager
 
@@ -52,5 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Mar 06 2015 Christian Stankowic <info@stankowic-development.net> - 0.2.1
+- Fixed RPM version to match script version
+- added -o / --logical-and, -p / --positive-filter and -n / --negative-filter parameters (thanks for your contribution, photoninger!)
+
 * Fri Mar 06 2015 Christian Stankowic <info@stankowic-development.net> - 1.0.1
 - First release
