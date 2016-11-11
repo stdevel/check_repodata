@@ -10,7 +10,7 @@ Source0:        nagios-plugins-check_repodata-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #BuildRequires:
-Requires:       rhnlib nrpe
+Requires:       rhnlib
 
 %description
 This package contains a Nagios / Icinga plugin for checking sync states of repositories managed by Spacewalk, Red Hat Satellite or SUSE Manager
