@@ -24,7 +24,7 @@ import glob
 import datetime
 
 #list of supported API levels
-supportedAPI = ["11.1","12","13","13.0","14","14.0","15","15.0","16","16.0"]
+supportedAPI = ["11.1","12","13","13.0","14","14.0","15","15.0","16","16.0","17","17.0","18","18.0","19","19.0"]
 
 if __name__ == "__main__":
     #define description, version and load parser
